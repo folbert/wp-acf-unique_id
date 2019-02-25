@@ -100,7 +100,7 @@ class acf_field_unique_id extends acf_field {
             $prefix = '';
 
             if(!empty($post_id) && (isset($field['prepend_with_post_id']) && $field['prepend_with_post_id'] != false)) {
-                $prefix = $post_id . '-';
+                $prefix = $post_id . '.';
             }
 
             if(isset($field['more_entropy']) && $field['more_entropy'] != false) {
