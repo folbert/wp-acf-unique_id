@@ -68,6 +68,11 @@ class acf_field_unique_id extends acf_field {
 	*  @return	n/a
 	*/
 	function render_field( $field ) {
+
+	    if(isset($field['hide_field']) && $field['hide_field'] != false) {
+            echo '<style>[data-key="' . $field['key'] . '"] { display: none; }</style>';
+        }
+
 		?>
 		<input type="text" readonly="readonly" name="<?php echo esc_attr($field['name']) ?>" value="<?php echo esc_attr($field['value']) ?>" />
 		<?php
@@ -89,11 +94,57 @@ class acf_field_unique_id extends acf_field {
 	*  @return	$value
 	*/
 	function update_value( $value, $post_id, $field ) {
-		if (!$value) {
-			$value = uniqid();
+
+		if (empty($value)) {
+
+            $prefix = '';
+
+            if(!empty($post_id) && (isset($field['prepend_with_post_id']) && $field['prepend_with_post_id'] != false)) {
+                $prefix = $post_id . '-';
+            }
+
+            if(isset($field['more_entropy']) && $field['more_entropy'] != false) {
+                $value = uniqid($prefix, true);
+            } else {
+                $value = uniqid($prefix);
+            }
+
 		}
+
 		return $value;
+		
 	}
+
+    /**
+     * @param $fieldd
+     */
+	function render_field_settings($field) {
+
+        acf_render_field_setting( $field, array(
+            'label'			=> __('Hide field','acf-unique_id'),
+            'instructions'	=> __('Do you want to hide the field in the admin area?','acf-unique_id'),
+            'name'			=> 'hide_field',
+            'type'			=> 'true_false',
+            'ui'			=> 1,
+        ));
+
+        acf_render_field_setting( $field, array(
+            'label'			=> __('Prepend value with post id','acf-unique_id'),
+            'instructions'	=> __('Do you want to prepend the value with the id of the post (or "options" if used on an options page)?.','acf-unique_id'),
+            'name'			=> 'prepend_with_post_id',
+            'type'			=> 'true_false',
+            'ui'			=> 1,
+        ));
+
+        acf_render_field_setting( $field, array(
+            'label'			=> __('Use more entropy','acf-unique_id'),
+            'instructions'	=> __('Do you want the code to pass <code>true</code> as second parameter to <code>uniqid()</code> in order to increase likelihood of a truly unique value?','acf-unique_id'),
+            'name'			=> 'more_entropy',
+            'type'			=> 'true_false',
+            'ui'			=> 1,
+        ));
+
+    }
 
 
 	/*
