@@ -95,12 +95,14 @@ class acf_field_unique_id extends acf_field {
 	*/
 	function update_value( $value, $post_id, $field ) {
 
+	    //dump($post_id);die();
+
 		if (empty($value)) {
 
             $prefix = '';
 
-            if(!empty($post_id) && (isset($field['prepend_with_post_id']) && $field['prepend_with_post_id'] != false)) {
-                $prefix = $post_id . '.';
+            if(!empty($post_id) && (isset($field['prefix_with_post_id']) && $field['prefix_with_post_id'] != false)) {
+                $prefix = $post_id . '-';
             }
 
             if(isset($field['more_entropy']) && $field['more_entropy'] != false) {
