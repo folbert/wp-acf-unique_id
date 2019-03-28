@@ -95,14 +95,15 @@ class acf_field_unique_id extends acf_field {
 	*/
 	function update_value( $value, $post_id, $field ) {
 
-	    //dump($post_id);die();
-
 		if (empty($value)) {
 
             $prefix = '';
 
             if(!empty($post_id) && (isset($field['prefix_with_post_id']) && $field['prefix_with_post_id'] != false)) {
-                $prefix = $post_id . '-';
+
+                $divider = (isset($field['divider']) ? $field['divider'] : '-');
+
+                $prefix = $post_id . $divider;
             }
 
             if(isset($field['more_entropy']) && $field['more_entropy'] != false) {
@@ -118,7 +119,7 @@ class acf_field_unique_id extends acf_field {
 	}
 
     /**
-     * @param $fieldd
+     * @param $field
      */
 	function render_field_settings($field) {
 
@@ -144,6 +145,14 @@ class acf_field_unique_id extends acf_field {
             'name'			=> 'more_entropy',
             'type'			=> 'true_false',
             'ui'			=> 1,
+        ));
+
+        acf_render_field_setting( $field, array(
+            'label'			=> __('Post-id and unique id divider','acf-unique_id'),
+            'instructions'	=> __('What to use as sepratator between post id and the unique id. You must also enable "Prepend value with post id" for this to have an effect.'),
+            'name'			=> 'divider',
+            'type'			=> 'text',
+            'default_value' => '-',
         ));
 
     }
